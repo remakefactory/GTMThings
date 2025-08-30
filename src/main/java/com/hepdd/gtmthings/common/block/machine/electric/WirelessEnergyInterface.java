@@ -134,11 +134,12 @@ public class WirelessEnergyInterface extends TieredIOPartMachine implements IInt
         }
 
         @Override
-        public long acceptEnergyFromNetwork(@Nullable Direction side, long voltage, long energyAdded) {
-            if (side == null || inputsEnergy(side)) {
+        public long acceptEnergyFromNetwork(Object o, @Nullable Direction side, long voltage, long energyAdded) {
+            if (o instanceof NotifiableEnergyContainer container && (side == null || inputsEnergy(side))) {
                 var c = energyInterface.getWirelessEnergyContainer();
                 if (c == null) return 0;
-                return c.addEnergy(energyAdded, energyInterface);
+                long loss = energyAdded / 10;
+                return c.addEnergy(energyAdded - loss, container.getMachine()) + loss;
             }
             return 0;
         }

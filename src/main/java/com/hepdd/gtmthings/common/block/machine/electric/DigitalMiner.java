@@ -70,8 +70,6 @@ public class DigitalMiner extends WorkableTieredMachine implements IDigitalMiner
     protected SlotWidget filterSlot;
     protected ButtonWidget resetButton;
     protected ButtonWidget silkButton;
-    protected ButtonWidget fortuneButton;
-    protected ButtonWidget overClockButton;
     // miner property
     @Getter
     @Setter
@@ -86,17 +84,15 @@ public class DigitalMiner extends WorkableTieredMachine implements IDigitalMiner
     @Persisted
     private int maxHeight;
     private int silkLevel;
-    private int fortuneLevel;
 
     public DigitalMiner(MetaMachineBlockEntity holder, int tier, Object... args) {
         super(holder, tier, GTMachineUtils.defaultTankSizeFunction, args);
         this.energyPerTick = GTValues.VEX[tier - 1];
         this.filterInventory = createFilterItemHandler();
-        this.fortuneLevel = 1;
         this.silkLevel = 0;
         this.minHeight = 0;
         this.maxHeight = 64;
-        this.minerRadius = 32;
+        this.minerRadius = (int) (8 * Math.pow(2, tier));
     }
 
     //////////////////////////////////////

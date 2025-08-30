@@ -129,6 +129,12 @@ public class CreativeInputBusPartMachine extends TieredIOPartMachine implements 
     public void setDistinct(boolean isDistinct) {
         getInventory().setDistinct(isDistinct);
         circuitInventory.setDistinct(isDistinct);
+        getHandlerList().setDistinctAndNotify(isDistinct);
+    }
+
+    @Override
+    public void onPaintingColorChanged(int color) {
+        getHandlerList().setColor(color, true);
     }
 
     protected void autoKeep() {
@@ -269,7 +275,7 @@ public class CreativeInputBusPartMachine extends TieredIOPartMachine implements 
                             }
                         }
                                 .setClearSlotOnRightClick(false)
-                                .setChangeListener(this::markDirty));
+                                .setChangeListener(this::onChanged));
             }
         }
 

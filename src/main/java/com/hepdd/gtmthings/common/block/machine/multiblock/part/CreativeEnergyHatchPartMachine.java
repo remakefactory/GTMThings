@@ -208,7 +208,7 @@ public class CreativeEnergyHatchPartMachine extends TieredIOPartMachine implemen
         public void serverTick() {}
 
         @Override
-        public long acceptEnergyFromNetwork(Direction side, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(Object o, Direction side, long voltage, long amperage) {
             return 0;
         }
 

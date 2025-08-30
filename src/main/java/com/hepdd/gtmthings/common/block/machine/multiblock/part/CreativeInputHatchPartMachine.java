@@ -21,11 +21,10 @@ import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -43,9 +42,9 @@ public class CreativeInputHatchPartMachine extends TieredIOPartMachine implement
     private final int slots;
     @Nullable
     protected TickableSubscription autoIOSubs;
-    private Map<Integer, FluidStack> fluidMap;
+    private final Int2ObjectOpenHashMap<FluidStack> fluidMap;
     @Persisted
-    private CustomFluidTank[] creativeTanks;
+    private final CustomFluidTank[] creativeTanks;
 
     // The `Object... args` parameter is necessary in case a superclass needs to pass any args along to createTank().
     // We can't use fields here because those won't be available while createTank() is called.
@@ -53,7 +52,7 @@ public class CreativeInputHatchPartMachine extends TieredIOPartMachine implement
         super(holder, GTValues.MAX, IO.IN);
         this.slots = SLOT_COUNT;
         this.tank = createTank();
-        this.fluidMap = new HashMap<>();
+        this.fluidMap = new Int2ObjectOpenHashMap<>();
         this.creativeTanks = new CustomFluidTank[SLOT_COUNT];
         for (int i = 0; i < this.creativeTanks.length; i++) {
             this.creativeTanks[i] = new CustomFluidTank(1);
@@ -81,6 +80,11 @@ public class CreativeInputHatchPartMachine extends TieredIOPartMachine implement
             }
         }
         updateTankSubscription();
+    }
+
+    @Override
+    public void onPaintingColorChanged(int color) {
+        getHandlerList().setColor(color, true);
     }
 
     @Override
@@ -158,9 +162,9 @@ public class CreativeInputHatchPartMachine extends TieredIOPartMachine implement
                                 updateTankSubscription();
                                 return;
                             }
-                            for (Map.Entry entry : fluidMap.entrySet()) {
-                                int i = (int) entry.getKey();
-                                FluidStack f = (FluidStack) entry.getValue();
+                            for (var entry : fluidMap.int2ObjectEntrySet()) {
+                                int i = entry.getIntKey();
+                                FluidStack f = entry.getValue();
                                 if (i != finalIndex && f.getFluid() == fluid.getFluid()) {
                                     return;
                                 } else if (i == finalIndex && f.getFluid() != fluid.getFluid()) {
