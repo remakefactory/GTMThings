@@ -138,10 +138,10 @@ public class CreativeInputBusPartMachine extends TieredIOPartMachine implements 
     }
 
     protected void autoKeep() {
-        if (getOffsetTimer() % 5 == 0) {
+        if (getOffsetTimer() % 20 == 0) {
             for (int i = 0; i < this.getInventorySize(); i++) {
                 ItemStack is = this.creativeStorage.getStackInSlot(i);
-                if (!is.isEmpty()) {
+                if (!getInventory().storage.stacks[i].is(is.getItem())) {
                     var newItem = is.copy();
                     newItem.setCount(Integer.MAX_VALUE);
                     getInventory().storage.setStackInSlot(i, newItem);

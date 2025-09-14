@@ -174,10 +174,10 @@ public class DigitalMiner extends WorkableTieredMachine implements IDigitalMiner
     }
 
     protected void autoOutput() {
-        if (getOffsetTimer() % 5 == 0) {
+        if (getOffsetTimer() % 20 == 0) {
             exportItems.exportToNearby(getFrontFacing());
+            updateAutoOutputSubscription();
         }
-        updateAutoOutputSubscription();
     }
 
     @Override

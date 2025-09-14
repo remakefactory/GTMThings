@@ -103,12 +103,15 @@ public class CreativeInputHatchPartMachine extends TieredIOPartMachine implement
     }
 
     protected void autoKeep() {
-        if (getOffsetTimer() % 5 == 0) {
+        if (getOffsetTimer() % 20 == 0) {
             for (int i = 0; i < SLOT_COUNT; i++) {
                 if (fluidMap.containsKey(i)) {
-                    var mFluid = this.creativeTanks[i].getFluid().copy();
-                    mFluid.setAmount(Integer.MAX_VALUE);
-                    this.tank.setFluidInTank(i, mFluid);
+                    var mFluid = this.creativeTanks[i].getFluid();
+                    if (!this.tank.getFluidInTank(i).equals(mFluid)) {
+                        var copy = mFluid.copy();
+                        copy.setAmount(Integer.MAX_VALUE);
+                        this.tank.setFluidInTank(i, copy);
+                    }
                 } else {
                     if (!this.tank.getFluidInTank(i).isEmpty()) {
                         this.tank.setFluidInTank(i, FluidStack.EMPTY);

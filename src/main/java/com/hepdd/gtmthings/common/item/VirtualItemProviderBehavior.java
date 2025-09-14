@@ -115,14 +115,27 @@ public final class VirtualItemProviderBehavior implements IAddInformation, IItem
         return CustomItems.VIRTUAL_ITEM_PROVIDER.get().getDescription();
     }
 
-    private record ItemHandler(Player entityPlayer, InteractionHand hand) implements IItemHandlerModifiable {
+    private static class ItemHandler implements IItemHandlerModifiable {
 
         private ItemStack getItem() {
             return entityPlayer.getItemInHand(hand);
         }
 
+        private ItemStack virtualItem;
+        private final Player entityPlayer;
+        private final InteractionHand hand;
+
+        private ItemHandler(Player entityPlayer, InteractionHand hand) {
+            this.entityPlayer = entityPlayer;
+            this.hand = hand;
+        }
+
         @Override
-        public void setStackInSlot(int i, @NotNull ItemStack arg) {}
+        public void setStackInSlot(int i, @NotNull ItemStack arg) {
+            if (entityPlayer.isLocalPlayer() || arg.is(CustomItems.VIRTUAL_ITEM_PROVIDER.get())) return;
+            virtualItem = arg.copyWithCount(1);
+            entityPlayer.setItemInHand(hand, setVirtualItem(getItem(), virtualItem));
+        }
 
         @Override
         public int getSlots() {
@@ -131,21 +144,25 @@ public final class VirtualItemProviderBehavior implements IAddInformation, IItem
 
         @Override
         public @NotNull ItemStack getStackInSlot(int i) {
-            return getVirtualItem(getItem());
+            if (virtualItem == null) virtualItem = getVirtualItem(getItem());
+            return virtualItem;
         }
 
         @Override
         public @NotNull ItemStack insertItem(int i, @NotNull ItemStack arg, boolean bl) {
-            if (arg.is(CustomItems.VIRTUAL_ITEM_PROVIDER.get())) return arg;
-            entityPlayer.setItemInHand(hand, setVirtualItem(getItem(), arg.copyWithCount(1)));
+            if (entityPlayer.isLocalPlayer() || arg.isEmpty() || arg.is(CustomItems.VIRTUAL_ITEM_PROVIDER.get())) return arg;
+            virtualItem = arg.copyWithCount(1);
+            entityPlayer.setItemInHand(hand, setVirtualItem(getItem(), virtualItem));
             return arg.copyWithCount(arg.getCount() - 1);
         }
 
         @Override
         public @NotNull ItemStack extractItem(int i, int j, boolean bl) {
-            if (getItem().getOrCreateTag().getBoolean("marked")) return ItemStack.EMPTY;
-            setVirtualItem(getItem(), ItemStack.EMPTY);
-            return getStackInSlot(0);
+            if (entityPlayer.isLocalPlayer() || getItem().getOrCreateTag().getBoolean("marked")) return ItemStack.EMPTY;
+            var old = getStackInSlot(0);
+            entityPlayer.setItemInHand(hand, setVirtualItem(getItem(), ItemStack.EMPTY));
+            virtualItem = ItemStack.EMPTY;
+            return old;
         }
 
         @Override

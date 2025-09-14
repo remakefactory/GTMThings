@@ -35,8 +35,6 @@ public class CustomItems {
             .onRegister(attachRenderer(() -> VirtualItemProviderRenderer.INSTANCE))
             .register();
 
-    public static final ItemEntry<VirtualItemProviderCellItem> VIRTUAL_ITEM_PROVIDER_CELL = GTMTHINGS_REGISTRATE.item("virtual_item_provider_cell", VirtualItemProviderCellItem::new).register();
-
     public static final ItemEntry<ComponentItem> PROGRAMMABLE_COVER = GTMTHINGS_REGISTRATE.item("programmable_cover", ComponentItem::create)
             .onRegister(attach(new CoverPlaceBehavior(GTMTCovers.PROGRAMMABLE_COVER)))
             .register();
