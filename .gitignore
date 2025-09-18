@@ -7,7 +7,6 @@ out/
 classes/
 bin/
 run/
-libs/
 /src/generated/
 *.launch
 *.iml
