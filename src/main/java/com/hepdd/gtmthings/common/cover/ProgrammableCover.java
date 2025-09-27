@@ -4,9 +4,10 @@ import com.gregtechceu.gtceu.api.capability.ICoverable;
 import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.api.cover.CoverDefinition;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
-import com.gregtechceu.gtceu.api.machine.SimpleTieredMachine;
 
 import net.minecraft.core.Direction;
+
+import com.hepdd.gtmthings.api.machine.IProgrammableMachine;
 
 public final class ProgrammableCover extends CoverBehavior {
 
@@ -17,12 +18,22 @@ public final class ProgrammableCover extends CoverBehavior {
     @Override
     public boolean canAttach() {
         MetaMachine machine = MetaMachine.getMachine(coverHolder.holder());
-        if (machine instanceof SimpleTieredMachine) {
+        if (machine instanceof IProgrammableMachine programmableMachine) {
+            programmableMachine.setProgrammable();
             for (CoverBehavior cover : machine.getCoverContainer().getCovers()) {
                 if (cover instanceof ProgrammableCover) return false;
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        MetaMachine machine = MetaMachine.getMachine(coverHolder.holder());
+        if (machine instanceof IProgrammableMachine programmableMachine) {
+            programmableMachine.setProgrammable();
+        }
     }
 }

@@ -202,5 +202,4 @@ public class WirelessOpticalComputationHatchMachine extends MultiblockPartMachin
         }
         return false;
     }
-
 }
